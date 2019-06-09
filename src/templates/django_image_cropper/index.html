@@ -31,7 +31,7 @@
     <script>
         const image_path = document.getElementById('id_original_image')
         image_path.addEventListener('change', showImage);
-
+        
         const form_data = new FormData();
         form_data.append('csrfmiddlewaretoken', "{{ csrf_token }}")
         
@@ -43,7 +43,8 @@
             scaleX: 0,
             scaleY: 0
         }
-                
+        form_data.append('event_detail', JSON.stringify(event_detail))
+        
         function showImage() {
             form_data.append('original_image', image_path.files[0])
             imageUrl = URL.createObjectURL(image_path.files[0])
@@ -77,7 +78,7 @@
             request.responseType = 'json'
             
             request.open('post', "{% url 'crop_image' %}")
-            form_data.append('event_detail', JSON.stringify(event_detail))
+            form_data.set('event_detail', JSON.stringify(event_detail))
             
             request.onload = function () {
                 if (request.status === 200) {
