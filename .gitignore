@@ -1,6 +1,6 @@
 ### Custom ###
 staticfiles
-
+.vscode
 # Created by https://www.gitignore.io/api/node,django,python
 # Edit at https://www.gitignore.io/?templates=node,django,python
 
