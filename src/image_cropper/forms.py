@@ -12,6 +12,13 @@ class ImageCropperForm(forms.ModelForm):
     class Meta:
         model = ImageCropperModel
         fields = ('original_image','edited_image','x','y','width','height',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['original_image'].widget.attrs.update({
+            'class': 'form-control-file',
+            'required': True
+        })
         
     def save(self):
         photo = super(ImageCropperForm, self).save()

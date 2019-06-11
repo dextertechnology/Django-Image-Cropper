@@ -8,7 +8,14 @@
     <title>Image Cropper</title>
     <link rel="shortcut icon" href="{% static 'img/baseline_crop_black_36dp.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'cropperjs/dist/cropper.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
     <style>
+        form {
+            border: 1px solid rgb(155, 155, 155);
+            padding: 10px;
+            margin: 20px 0px;
+            border-radius: 5px;
+        }
         #image-div {
             width: 100%;
             max-width: 300px;
@@ -23,20 +30,51 @@
     </style>
 </head>
 <body>
-    {{ form.original_image }}
-    <div id="image-div"></div>
-
-    <input id="submit_image" type="submit" value="Submit">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mt-2">
+                <h1>Django Image Cropper</h1>
+                <form>
+                    <div class="form-group">
+                        <label for="id_original_image">Upload your image</label>
+                        {{ form.original_image }}
+                    </div>
+                    <div id="image-cropper-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div id="image-div"></div>
+                                <input class="btn btn-primary" id="submit_image" type="submit" value="Submit">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="image-list">
         <ul>
-            {% for i in objects %}
-            <li><img width="30px" src="{{ i.edited_image.url }}" alt=""></li>
-            {% endfor %}
+            <div class="container">
+                <div class="row">
+                    {% for i in objects %}
+                    <div class="col-md-3 mt-4">
+                        <!-- <button class="resize-update-image" data-original-image="{{i.id}}"> -->
+                            <img width="240" height="320" src="{{ i.edited_image.url }}" alt="">
+                        <!-- </button> -->
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </ul>
     </div>
-
+    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'cropperjs/dist/cropper.min.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script>
+        $('#id_original_image').on('change', function () {
+            $('#image-cropper-modal').modal('show')
+        })
+    </script>
     <script>
         const image_path = document.getElementById('id_original_image')
         image_path.addEventListener('change', showImage);
@@ -67,7 +105,17 @@
             img.style.position = 'relative'
             img.id = 'image'
             
-            document.getElementById('image-div').appendChild(img)
+            const image_div = document.getElementById('image-div')
+
+            if (!image_div.hasChildNodes()) {
+                image_div.appendChild(img)
+            } else {
+                while (image_div.firstChild) {
+                    image_div.removeChild(image_div.firstChild);
+                }
+                image_div.appendChild(img)
+            }
+
             const image = document.querySelector('#image');
             const cropper = new Cropper(image, {
                 aspectRatio: 2 / 3,
